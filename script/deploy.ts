@@ -18,7 +18,7 @@ async function main() {
   console.log("Deploying contracts with the account:", deployer.address);
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  // CapricornSwapFactory: 0x7a1eba426aa389aac9b410cdfe3cef5d344e043f
+  // CubedaoSwapFactory: 0x7a1eba426aa389aac9b410cdfe3cef5d344e043f
   // WindowSize: 600 seconds
   // Granularity_: 10
   const SlidingWindowOracle= await ethers.getContractFactory("SlidingWindowOracle");
