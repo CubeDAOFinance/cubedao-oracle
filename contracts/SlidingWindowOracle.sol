@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.4;
 
-import './interfaces/ICapricornFactory.sol';
-import './interfaces/ICapricornPair.sol';
+import './interfaces/ICubedaoFactory.sol';
+import './interfaces/ICubedaoPair.sol';
 
-import './libraries/CapricornOracleLibrary.sol';
+import './libraries/CubedaoOracleLibrary.sol';
 import './libraries/FixedPoint.sol';
 
 import '@openzeppelin/contracts/utils/math/SafeMath.sol';
@@ -23,7 +23,7 @@ contract SlidingWindowOracle {
         uint price1Cumulative;
     }
 
-    // CapricornSwap Factory
+    // CubedaoSwap Factory
     address public immutable factory;
     // the desired amount of time over which the moving average should be computed, e.g. 24 hours
     uint public immutable windowSize;  // unit: second
@@ -68,7 +68,7 @@ contract SlidingWindowOracle {
     // update the cumulative price for the observation at the current timestamp. each observation is updated at most
     // once per epoch period.
     function update(address tokenA, address tokenB) external {
-        address pair = ICapricornFactory(factory).getPair(tokenA, tokenB);
+        address pair = ICubedaoFactory(factory).getPair(tokenA, tokenB);
 
         // populate the array with empty observations (first call only)
         for (uint i = pairObservations[pair].length; i < granularity; i++) {
@@ -82,7 +82,7 @@ contract SlidingWindowOracle {
         // only want to commit updates once per period (i.e. windowSize / granularity)
         uint timeElapsed = block.timestamp - observation.timestamp;
         if (timeElapsed > periodSize) {
-            (uint price0Cumulative, uint price1Cumulative,) = CapricornOracleLibrary.currentCumulativePrices(pair);
+            (uint price0Cumulative, uint price1Cumulative,) = CubedaoOracleLibrary.currentCumulativePrices(pair);
             observation.timestamp = block.timestamp;
             observation.price0Cumulative = price0Cumulative;
             observation.price1Cumulative = price1Cumulative;
@@ -125,7 +125,7 @@ contract SlidingWindowOracle {
             return (0, false);
         }
 
-        (uint price0Cumulative, uint price1Cumulative,) = CapricornOracleLibrary.currentCumulativePrices(pair);
+        (uint price0Cumulative, uint price1Cumulative,) = CubedaoOracleLibrary.currentCumulativePrices(pair);
         (address token0,) = sortTokens(tokenIn, tokenOut);
 
         if (token0 == tokenIn) {
